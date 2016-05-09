@@ -82,7 +82,7 @@ function activate(context) {
         }
         
         function updateDecorations() {
-            if ((!activeEditor) || ((vscode.workspace.getConfiguration('editor').get('renderWhitespace')) == 'false') || (!enabled)) {
+            if ((!activeEditor) || (!enabled)) {
                 return;
             }
             
