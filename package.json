@@ -1,9 +1,17 @@
 {
     "name": "whitespace-plus",
-    "displayName": "whitespace-plus",
+    "displayName": "Whitespace+",
     "description": "Clearly mark whitespace characters.",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "publisher": "davidghouchin",
+    "readme": "README.md",
+    "license": "LICENSE",
+    "keywords": [
+        "whitespace"
+    ],
+    "bugs": {
+        "url": "https://www.github.com/davidhouchin/whitespace-plus/issues"
+    },
     "engines": {
         "vscode": "^1.0.0"
     },
