@@ -4,6 +4,8 @@ var vscode = require('vscode');
 
 var enabled = false;
 
+var configPath = vscode.extensions.getExtension("davidhouchin.whitespace-plus").extensionPath + '\\config.json';
+
 var appearanceSpace = {
     borderWidth: '1px',
     borderRadius: '2px',
@@ -52,8 +54,15 @@ function activate(context) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    var disposable1 = vscode.commands.registerCommand('extension.enableWhitespacePlus', function () {
+    var disposable1 = vscode.commands.registerCommand('extension.toggleWhitespacePlus', function () {
+        //var configPath = extensions.getExtension('whitespace-plus').extensionPath;
         
+        if (enabled) {
+            cleanDecorations();
+            enabled = false;
+            return;
+        }
+
         var activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
             enabled = true;
@@ -126,13 +135,16 @@ function activate(context) {
 
     context.subscriptions.push(disposable1);
     
-    var disposable2 = vscode.commands.registerCommand('extension.disableWhitespacePlus', function () {
-        cleanDecorations();
-        enabled = false;
+    var disposable2 = vscode.commands.registerCommand('extension.configWhitespacePlus', function () {
+        
     });
     
     context.subscriptions.push(disposable2);
     
+    function loadConfig() {
+
+    }
+
     function cleanDecorations() {
         if (whitespaceDecorationSpace != null) {whitespaceDecorationSpace.dispose(); whitespaceDecorationSpace = null;}
         if (whitespaceDecorationTab != null) {whitespaceDecorationTab.dispose(); whitespaceDecorationTab = null;}
