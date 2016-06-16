@@ -19,13 +19,18 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.toggleWhitespacePlus"
+        "onCommand:extension.toggleWhitespacePlus",
+        "onCommand:extension.toggleWhitespacePlusMode",
+        "onCommand:extension.configWhitespacePlus"                
     ],
     "main": "./extension",
     "contributes": {
         "commands": [{
             "command": "extension.toggleWhitespacePlus",
             "title": "Whitespace+ Toggle"
+        },{
+            "command": "extension.toggleWhitespacePlusMode",
+            "title": "Whitespace+ Mode"
         },{
             "command": "extension.configWhitespacePlus",
             "title": "Whitespace+ Config"

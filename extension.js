@@ -1,50 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 var vscode = require('vscode');
+var fs = require('fs');
 
 var enabled = false;
 
 var configPath = vscode.extensions.getExtension("davidhouchin.whitespace-plus").extensionPath + '\\config.json';
-
-var appearanceSpace = {
-    borderWidth: '1px',
-    borderRadius: '2px',
-    borderStyle: 'solid',
-    light: {
-        backgroundColor: 'rgba(58, 70, 101, 0.3)',
-        borderColor: 'rgba(58, 70, 101, 0.4)'
-    },
-    dark: {
-        backgroundColor: 'rgba(117, 141, 203, 0.3)',
-        borderColor: 'rgba(117, 141, 203, 0.4)'
-    }
-};
-
-var appearanceTab = {
-    borderWidth: '1px',
-    borderRadius: '2px',
-    borderStyle: 'solid',
-    light: {
-        backgroundColor: 'rgba(170, 53, 53, 0.3)',
-        borderColor: 'rgba(170, 53, 53, 0.4)'
-    },
-    dark: {
-        backgroundColor: 'rgba(223, 97, 97, 0.3)',
-        borderColor: 'rgba(223, 97, 97, 0.4)'
-    }
-}
-
-var appearanceNewline = {
-    borderWidth: '1px',
-    borderRadius: '2px',
-    borderStyle: 'solid',
-    light: {
-        borderColor: 'rgba(38, 150, 38, 0.4)'
-    },
-    dark: {
-        borderColor: 'rgba(85, 215, 85, 0.4)'
-    }
-}
+var configUri = vscode.Uri.file(configPath);
 
 var whitespaceDecorationSpace, whitespaceDecorationTab, whitespaceDecorationNewline;
 
@@ -54,8 +16,9 @@ function activate(context) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
+    loadConfig(configPath);
+
     var disposable1 = vscode.commands.registerCommand('extension.toggleWhitespacePlus', function () {
-        //var configPath = extensions.getExtension('whitespace-plus').extensionPath;
         
         if (enabled) {
             cleanDecorations();
@@ -135,14 +98,25 @@ function activate(context) {
 
     context.subscriptions.push(disposable1);
     
-    var disposable2 = vscode.commands.registerCommand('extension.configWhitespacePlus', function () {
-        
+    var disposable2 = vscode.commands.registerCommand('extension.toggleWhitespacePlusMode', function () {
+
+    });
+
+    context.subscriptions.push(disposable2);
+
+    var disposable3 = vscode.commands.registerCommand('extension.configWhitespacePlus', function () {
+        vscode.workspace.openTextDocument(configUri).then( function(document) {vscode.window.showTextDocument(document)});
     });
     
-    context.subscriptions.push(disposable2);
+    context.subscriptions.push(disposable3);
     
-    function loadConfig() {
+    function loadConfig(filePath) {
+        var cfg = JSON.parse(fs.readFileSync(filePath).toString());
 
+        //TODO: We need to allow highlighted elements to be configurable
+        whitespaceDecorationSpace = cfg.elements[0].style;
+        whitespaceDecorationTab = cfg.elements[1].style;
+        whitespaceDecorationNewline = cfg.elements[2].style;
     }
 
     function cleanDecorations() {
