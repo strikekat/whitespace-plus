@@ -1,32 +1,28 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 var vscode = require('vscode');
 var fs = require('fs');
 
 var enabled = false;
+var activeEditor;
 
+var config;
 var configPath = vscode.extensions.getExtension("davidhouchin.whitespace-plus").extensionPath + '\\config.json';
 var configUri = vscode.Uri.file(configPath);
 
-var whitespaceDecorationSpace, whitespaceDecorationTab, whitespaceDecorationNewline;
+var modes = ["all", "trailing"];
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+var elements = [];
+
 function activate(context) {
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
     loadConfig(configPath);
 
     var disposable1 = vscode.commands.registerCommand('extension.toggleWhitespacePlus', function () {
-        
         if (enabled) {
             cleanDecorations();
             enabled = false;
             return;
         }
 
-        var activeEditor = vscode.window.activeTextEditor;
+        activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
             enabled = true;
             triggerUpdate();
@@ -50,56 +46,21 @@ function activate(context) {
             if (timeout) {
                 clearTimeout(timeout);
             }
-            timeout = setTimeout(updateDecorations, 100);
-        }
-        
-        function updateDecorations() {
-            if ((!activeEditor) || (!enabled)) {
-                return;
-            }
-            
-            if (whitespaceDecorationSpace == null) {whitespaceDecorationSpace = vscode.window.createTextEditorDecorationType(appearanceSpace);}
-            if (whitespaceDecorationTab == null) {whitespaceDecorationTab = vscode.window.createTextEditorDecorationType(appearanceTab);}
-            if (whitespaceDecorationNewline == null) {whitespaceDecorationNewline = vscode.window.createTextEditorDecorationType(appearanceNewline);}
-            
-            var regExSpace = /\s/g;
-            var regExTab = /\t/g;
-            var regExNewline = /\n/g;
-            var text = activeEditor.document.getText();
-            var whitespaceSpaceChars = [];
-            var whitespaceTabChars = [];
-            var whitespaceNewlineChars = [];
-            
-            var match;
-            while (match = regExSpace.exec(text)) {
-                var startPos = activeEditor.document.positionAt(match.index);
-                var endPos = activeEditor.document.positionAt(match.index + match[0].length);
-                var decoration = {range: new vscode.Range(startPos, endPos)};
-                whitespaceSpaceChars.push(decoration);
-            }
-            while (match = regExTab.exec(text)) {
-                var startPos = activeEditor.document.positionAt(match.index);
-                var endPos = activeEditor.document.positionAt(match.index + match[0].length);
-                var decoration = {range: new vscode.Range(startPos, endPos)};
-                whitespaceTabChars.push(decoration);
-            }
-            while (match = regExNewline.exec(text)) {
-                var startPos = activeEditor.document.positionAt(match.index);
-                var endPos = activeEditor.document.positionAt(match.index + match[0].length);
-                var decoration = {range: new vscode.Range(startPos, endPos)};
-                whitespaceNewlineChars.push(decoration);
-            }
-        
-            activeEditor.setDecorations(whitespaceDecorationSpace, whitespaceSpaceChars);
-            activeEditor.setDecorations(whitespaceDecorationTab, whitespaceTabChars);
-            activeEditor.setDecorations(whitespaceDecorationNewline, whitespaceNewlineChars);
+            timeout = setTimeout(updateDecorations, config.refreshRate);
         }
     });
 
     context.subscriptions.push(disposable1);
     
     var disposable2 = vscode.commands.registerCommand('extension.toggleWhitespacePlusMode', function () {
+        vscode.window.showQuickPick(modes).then(function(selection){
+            cleanDecorations();
+            elements.length = 0;
+            
+            setMode(selection);
 
+            if (enabled) {updateDecorations();}
+        });
     });
 
     context.subscriptions.push(disposable2);
@@ -110,19 +71,71 @@ function activate(context) {
     
     context.subscriptions.push(disposable3);
     
-    function loadConfig(filePath) {
-        var cfg = JSON.parse(fs.readFileSync(filePath).toString());
+    function updateDecorations() {
+          if ((!activeEditor) || (!enabled)) {
+            return;
+        }
 
-        //TODO: We need to allow highlighted elements to be configurable
-        whitespaceDecorationSpace = cfg.elements[0].style;
-        whitespaceDecorationTab = cfg.elements[1].style;
-        whitespaceDecorationNewline = cfg.elements[2].style;
+        createDecorations();
+
+        var text = activeEditor.document.getText();
+        var decChars = [];
+        var match;
+
+        elements.forEach(function(cur, idx) {
+            var regex = RegExp(cur.pattern, 'gm');
+            decChars[idx] = {
+                "chars": [],
+                "decorator": cur.decorator
+            };
+            while (match = regex.exec(text)) {
+                var startPos = activeEditor.document.positionAt(match.index);
+                var endPos = activeEditor.document.positionAt(match.index + match[0].length);
+                var range = {range: new vscode.Range(startPos, endPos)};
+                decChars[idx].chars.push(range);
+            }
+        });
+
+        decChars.forEach(function(cur) {
+            activeEditor.setDecorations(cur.decorator, cur.chars);
+        });
+    }
+
+    function loadConfig(filePath) {
+        config = JSON.parse(fs.readFileSync(filePath).toString());
+
+        setMode(config.mode);
+
+        createDecorations();
+    }
+
+    function setMode(mode) {
+        if (mode == "trailing") {
+                config.elements.forEach(function(cur) {
+                    if (cur.name == "trailing") {elements.push(cur)};
+                });
+            } else {
+                config.elements.forEach(function(cur) {
+                    if (cur.enabled) {elements.push(cur)};
+                });
+            }
+    }
+
+    function createDecorations() {
+        elements.forEach(function(cur) {
+            if (cur.decorator == null) {
+                cur.decorator = vscode.window.createTextEditorDecorationType(cur.style);
+            }
+        });
     }
 
     function cleanDecorations() {
-        if (whitespaceDecorationSpace != null) {whitespaceDecorationSpace.dispose(); whitespaceDecorationSpace = null;}
-        if (whitespaceDecorationTab != null) {whitespaceDecorationTab.dispose(); whitespaceDecorationTab = null;}
-        if (whitespaceDecorationNewline != null) {whitespaceDecorationNewline.dispose(); whitespaceDecorationNewline = null;}
+        elements.forEach(function(cur) {
+            if (cur.decoration != null) {
+                cur.decorator.dispose();
+                cur.decorator = null;
+            }
+        });
     }
 }
 exports.activate = activate;
