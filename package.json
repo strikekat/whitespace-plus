@@ -1,13 +1,16 @@
 {
     "name": "whitespace-plus",
     "displayName": "Whitespace+",
-    "description": "Clearly mark whitespace characters.",
-    "version": "0.0.2",
+    "description": "Clearly mark whitespace characters and custom patterns.",
+    "version": "0.0.3",
     "publisher": "davidhouchin",
     "readme": "README.md",
     "license": "LICENSE",
     "keywords": [
-        "whitespace"
+        "whitespace",
+        "regex",
+        "pattern",
+        "highlight"
     ],
     "bugs": {
         "url": "https://www.github.com/davidhouchin/whitespace-plus/issues"
@@ -19,16 +22,21 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.enableWhitespacePlus"
+        "onCommand:extension.toggleWhitespacePlus",
+        "onCommand:extension.toggleWhitespacePlusMode",
+        "onCommand:extension.configWhitespacePlus"                
     ],
     "main": "./extension",
     "contributes": {
         "commands": [{
-            "command": "extension.enableWhitespacePlus",
-            "title": "Enable Whitespace-Plus"
+            "command": "extension.toggleWhitespacePlus",
+            "title": "Whitespace+ Toggle"
         },{
-            "command": "extension.disableWhitespacePlus",
-            "title": "Disable Whitespace-Plus"
+            "command": "extension.toggleWhitespacePlusMode",
+            "title": "Whitespace+ Mode"
+        },{
+            "command": "extension.configWhitespacePlus",
+            "title": "Whitespace+ Config"
         }]
     },
     "scripts": {
