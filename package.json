@@ -1,13 +1,16 @@
 {
     "name": "whitespace-plus",
     "displayName": "Whitespace+",
-    "description": "Clearly mark whitespace characters.",
+    "description": "Clearly mark whitespace characters and custom patterns.",
     "version": "0.0.3",
     "publisher": "davidhouchin",
     "readme": "README.md",
     "license": "LICENSE",
     "keywords": [
-        "whitespace"
+        "whitespace",
+        "regex",
+        "pattern",
+        "highlight"
     ],
     "bugs": {
         "url": "https://www.github.com/davidhouchin/whitespace-plus/issues"
