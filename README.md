@@ -4,7 +4,8 @@ You can set the extension to display all whitespace characters, or only trailing
 
 I originally created this to work around issues with VS Code's whitespace rendering, but these have been resolved.  
 This can still be utilized to customize how you want whitespace or other custom patterns to be shown.  
-By modifying the configuration, you can add new patterns to be marked, customize the look of the highlights, set the default display mode, and modify the update rate.
+By modifying the configuration, you can add new patterns to be marked, customize the look of the highlights, set the default display mode, and modify the update rate.  
+Set **autoStart** to true to start highlighting patterns automatically after opening a file.
 
 ## Commands
 **whitespace+ toggle**: Toggle the display of the extension.  
