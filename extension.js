@@ -22,6 +22,9 @@ function activate(context) {
     // Initial configuration load
     loadConfig(configPath);
 
+    // Are we set to go automatically?
+    if (config.autoStart) {enableUpdates();}
+
     // Main toggle method
     var disposable1 = vscode.commands.registerCommand('extension.toggleWhitespacePlus', function () {
         // If already enabled, clean the decorations and then disable
@@ -31,7 +34,35 @@ function activate(context) {
             return;
         }
 
-        // Otherwise, enable and start the update cycle
+        // Otherwise, let's go!
+        enableUpdates();
+    });
+
+    context.subscriptions.push(disposable1);
+    
+    // Show a quick pick menu to change the display mode
+    var disposable2 = vscode.commands.registerCommand('extension.toggleWhitespacePlusMode', function () {
+        vscode.window.showQuickPick(modes).then(function(selection){
+            cleanDecorations();
+            
+            setMode(selection);
+
+            if (enabled) {updateDecorations();}
+        });
+    });
+
+    context.subscriptions.push(disposable2);
+
+    // Open the config file
+    var disposable3 = vscode.commands.registerCommand('extension.configWhitespacePlus', function () {
+        vscode.workspace.openTextDocument(configUri).then( function(document) {vscode.window.showTextDocument(document)});
+    });
+    
+    context.subscriptions.push(disposable3);
+    
+    // Starts the decorator updating
+    function enableUpdates() {
+        // Start the update cycle
         activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
             enabled = true;
@@ -61,30 +92,8 @@ function activate(context) {
             }
             timeout = setTimeout(updateDecorations, config.refreshRate);
         }
-    });
+    }
 
-    context.subscriptions.push(disposable1);
-    
-    // Show a quick pick menu to change the display mode
-    var disposable2 = vscode.commands.registerCommand('extension.toggleWhitespacePlusMode', function () {
-        vscode.window.showQuickPick(modes).then(function(selection){
-            cleanDecorations();
-            
-            setMode(selection);
-
-            if (enabled) {updateDecorations();}
-        });
-    });
-
-    context.subscriptions.push(disposable2);
-
-    // Open the config file
-    var disposable3 = vscode.commands.registerCommand('extension.configWhitespacePlus', function () {
-        vscode.workspace.openTextDocument(configUri).then( function(document) {vscode.window.showTextDocument(document)});
-    });
-    
-    context.subscriptions.push(disposable3);
-    
     // Reads editor text, and updates decorators on page
     function updateDecorations() {
         if ((!activeEditor) || (!enabled)) {
