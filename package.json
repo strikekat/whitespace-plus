@@ -1,19 +1,26 @@
 {
     "name": "whitespace-plus",
     "displayName": "Whitespace+",
-    "description": "Clearly mark whitespace characters and custom patterns.",
+    "description": "Clearly mark whitespace characters (including trailing) and custom patterns.",
     "version": "0.0.4",
     "publisher": "davidhouchin",
     "readme": "README.md",
+    "icon": "icon.png",
     "license": "LICENSE",
     "keywords": [
         "whitespace",
         "regex",
         "pattern",
-        "highlight"
+        "highlight",
+        "trailing"
     ],
     "bugs": {
         "url": "https://www.github.com/davidhouchin/whitespace-plus/issues"
+    },
+    "homepage": "https://github.com/davidhouchin/whitespace-plus/blob/master/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://www.github.com/davidhouchin/whitespace-plus.git"
     },
     "engines": {
         "vscode": "^1.0.0"
