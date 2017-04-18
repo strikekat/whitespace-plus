@@ -127,7 +127,7 @@ function activate(context) {
                 var range = {range: new vscode.Range(startPos, endPos)};
                 if (cur.enabled === 'inactiveLines' && startPos.line === activeEditor.selection.active.line) {
                     continue;
-            }
+                }
                 decChars[idx].chars.push(range);
             }
         });
