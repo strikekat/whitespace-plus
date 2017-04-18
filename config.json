@@ -54,7 +54,7 @@
         }
     },{
         "name": "trailing",
-        "enabled": "inactiveLines",
+        "enabled": "unlessCursorAtEndOfPattern",
         "pattern": "[^\\S\\r\\n]+$",
         "style": {
             "borderWidth": "1px",

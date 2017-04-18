@@ -125,7 +125,15 @@ function activate(context) {
                 var startPos = activeEditor.document.positionAt(match.index);
                 var endPos = activeEditor.document.positionAt(match.index + match[0].length);
                 var range = {range: new vscode.Range(startPos, endPos)};
-                if (cur.enabled === 'inactiveLines' && startPos.line === activeEditor.selection.active.line) {
+                if (activeEditor.selection.active.isEqual(endPos)
+                    && cur.enabled == 'unlessCursorAtEndOfPattern') {
+                    continue;
+                } else if (activeEditor.selection.active.isAfterOrEqual(startPos)
+                    && activeEditor.selection.active.isBeforeOrEqual(endPos)
+                    && cur.enabled == 'unlessCursorWithinPattern') {
+                    continue;
+                } else if (startPos.line == activeEditor.selection.active.line
+                    && cur.enabled == 'unlessCursorOnSameLine') {
                     continue;
                 }
                 decChars[idx].chars.push(range);
