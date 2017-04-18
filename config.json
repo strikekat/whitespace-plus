@@ -54,7 +54,7 @@
         }
     },{
         "name": "trailing",
-        "enabled": false,
+        "enabled": "inactiveLines",
         "pattern": "[^\\S\\r\\n]+$",
         "style": {
             "borderWidth": "1px",
