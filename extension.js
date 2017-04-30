@@ -84,6 +84,13 @@ function activate(context) {
             }
         }, null, context.subscriptions);
         
+        // And when changing the selection or moving the cursor
+        vscode.window.onDidChangeTextEditorSelection(event => {
+            if (activeEditor && event.textEditor === activeEditor) {
+                triggerUpdate();
+            }
+        }, null, context.subscriptions);
+        
         // Set timeout for updating decorations
         var timeout = null;
         function triggerUpdate() {
@@ -118,6 +125,17 @@ function activate(context) {
                 var startPos = activeEditor.document.positionAt(match.index);
                 var endPos = activeEditor.document.positionAt(match.index + match[0].length);
                 var range = {range: new vscode.Range(startPos, endPos)};
+                if (activeEditor.selection.active.isEqual(endPos)
+                    && cur.enabled == 'unlessCursorAtEndOfPattern') {
+                    continue;
+                } else if (activeEditor.selection.active.isAfterOrEqual(startPos)
+                    && activeEditor.selection.active.isBeforeOrEqual(endPos)
+                    && cur.enabled == 'unlessCursorWithinPattern') {
+                    continue;
+                } else if (startPos.line == activeEditor.selection.active.line
+                    && cur.enabled == 'unlessCursorOnSameLine') {
+                    continue;
+                }
                 decChars[idx].chars.push(range);
             }
         });

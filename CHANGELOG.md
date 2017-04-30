@@ -1,3 +1,6 @@
+**0.0.5**  
+Don't highlight trailing spaces within the current line  
+
 **0.0.4**  
 Add config option to start highlighting automatically  
 
