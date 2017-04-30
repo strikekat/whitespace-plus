@@ -2,7 +2,7 @@
     "name": "whitespace-plus",
     "displayName": "Whitespace+",
     "description": "Clearly mark whitespace characters (including trailing) and custom patterns.",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "davidhouchin",
     "readme": "README.md",
     "icon": "icon.png",
